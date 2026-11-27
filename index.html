@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catat Pengeluaran Pasutri AI</title>
+    <style>
+      :root {
+        --bg: #f4f6f9;
+        --card: #ffffff;
+        --primary: #16a34a;
+        --primary-hover: #15803d;
+        --blue: #2563eb;
+        --text: #1e293b;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --danger: #dc2626;
+      }
+      * {
+        box-sizing: border-box;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        padding: 16px;
+      }
+      .container {
+        max-width: 540px;
+        margin: 0 auto;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+      .header h1 {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+      .btn-icon {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        margin-bottom: 14px;
+        border: 1px solid var(--border);
+      }
+      .actor-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .actor-btn {
+        padding: 10px;
+        border-radius: 10px;
+        border: 1.5px solid var(--border);
+        background: #fff;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: 0.15s;
+      }
+      .actor-btn.active {
+        border-color: var(--blue);
+        background: #eff6ff;
+        color: var(--blue);
+      }
+      textarea {
+        width: 100%;
+        min-height: 105px;
+        border: 1.5px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+        font-size: 1rem;
+        resize: vertical;
+        outline: none;
+      }
+      textarea:focus {
+        border-color: var(--blue);
+      }
+      .hint {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin: 8px 0 12px;
+        line-height: 1.45;
+      }
+      .actions {
+        display: grid;
+        grid-template-columns: auto 1fr 1.2fr;
+        gap: 8px;
+      }
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 11px 14px;
+        font-weight: 600;
+        font-size: 0.92rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .btn-mic {
+        background: #fee2e2;
+        color: #b91c1c;
+      }
+      .btn-mic.recording {
+        background: #dc2626;
+        color: #fff;
+        animation: pulse 1.2s infinite;
+      }
+      .btn-secondary {
+        background: #f1f5f9;
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.65;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .status {
+        padding: 11px 14px;
+        border-radius: 10px;
+        font-size: 0.88rem;
+        margin-bottom: 14px;
+        display: none;
+        line-height: 1.45;
+      }
+      .status.ok {
+        display: block;
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+      }
+      .status.err {
+        display: block;
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+      }
+      .status.info {
+        display: block;
+        background: #e0f2fe;
+        color: #075985;
+        border: 1px solid #7dd3fc;
+      }
+
+      .preview-item {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 10px;
+        background: #fafafa;
+      }
+      .preview-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+      .badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        background: #e2e8f0;
+        color: #334155;
+      }
+      .del-btn {
+        background: none;
+        border: none;
+        color: var(--danger);
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 0.82rem;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      label {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-bottom: 3px;
+        font-weight: 600;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        background: #fff;
+      }
+      .settings-panel {
+        display: none;
+      }
+      .settings-panel.open {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>💸 Catatan Pasutri AI</h1>
+        <button type="button" class="btn-icon" id="toggleSettingsBtn">
+          ⚙️ Pengaturan
+        </button>
+      </div>
+
+      <div class="card settings-panel" id="settingsCard">
+        <h3 style="margin-top: 0; font-size: 1rem">Pengaturan Koneksi</h3>
+        <div style="margin-bottom: 10px">
+          <label>Web App URL (Google Apps Script /exec)</label>
+          <input
+            type="url"
+            id="webAppUrlInput"
+            placeholder="https://script.google.com/macros/s/.../exec"
+          />
+        </div>
+        <div style="margin-bottom: 12px">
+          <label>PIN Rahasia Pasutri</label>
+          <input type="password" id="pinInput" placeholder="Masukkan PIN" />
+        </div>
+        <div style="display: flex; gap: 8px">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            id="pingBtn"
+            style="flex: 1"
+          >
+            🔌 Tes Koneksi
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="saveSettingsBtn"
+            style="flex: 1"
+          >
+            💾 Simpan
+          </button>
+        </div>
+      </div>
+
+      <div id="statusBox" class="status"></div>
+
+      <div class="card">
+        <div class="actor-switch">
+          <button
+            type="button"
+            class="actor-btn active"
+            id="btnActorS"
+            data-actor="s"
+          >
+            👨 Suami (kode: s)
+          </button>
+          <button type="button" class="actor-btn" id="btnActorI" data-actor="i">
+            👩 Istri (kode: i)
+          </button>
+        </div>
+
+        <textarea
+          id="expenseInput"
+          placeholder="Contoh: Nasi kuning 8000, kukusan 8000, foya-foya beli kopi 35rb, sampingan token listrik 100rb"
+        ></textarea>
+        <div class="hint">
+          💡 Default masuk ke <b>Pengeluaran Bulanan</b>. Sebut kata
+          <b>"foya-foya"</b> atau <b>"sampingan"</b> jika ingin masuk ke tabel
+          tersebut. Bisa sebut tanggal (misal <i>"kemarin"</i> /
+          <i>"tanggal 22"</i>).
+        </div>
+
+        <div class="actions">
+          <button type="button" class="btn btn-mic" id="micBtn">
+            🎤 Suara
+          </button>
+          <button type="button" class="btn btn-secondary" id="previewBtn">
+            🔍 Cek Dulu
+          </button>
+          <button type="button" class="btn btn-primary" id="commitDirectBtn">
+            ⚡ Catat Langsung
+          </button>
+        </div>
+      </div>
+
+      <div class="card" id="previewCard" style="display: none">
+        <h3 style="margin-top: 0; font-size: 1rem">
+          Hasil Pembacaan AI (Bisa Diedit)
+        </h3>
+        <div id="previewList"></div>
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="confirmCommitBtn"
+          style="width: 100%; margin-top: 6px"
+        >
+          ✅ Simpan ke Google Sheet
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const STORAGE_URL = "pasutri_gas_url";
+      const STORAGE_PIN = "pasutri_gas_pin";
+      const STORAGE_ACTOR = "pasutri_actor";
+
+      let currentActor = localStorage.getItem(STORAGE_ACTOR) || "s";
+      let previewItems = [];
+
+      function formatRupiah(val) {
+        const num = Number(val);
+        return isNaN(num) ? "0" : num.toLocaleString("id-ID");
+      }
+
+      function showStatus(type, msg) {
+        const box = document.getElementById("statusBox");
+        box.className = "status " + type;
+        box.innerHTML = msg;
+      }
+
+      function setActor(actor) {
+        currentActor = actor === "i" ? "i" : "s";
+        localStorage.setItem(STORAGE_ACTOR, currentActor);
+        document
+          .getElementById("btnActorS")
+          .classList.toggle("active", currentActor === "s");
+        document
+          .getElementById("btnActorI")
+          .classList.toggle("active", currentActor === "i");
+      }
+
+      function getConfig() {
+        return {
+          url: (localStorage.getItem(STORAGE_URL) || "").trim(),
+          pin: (localStorage.getItem(STORAGE_PIN) || "").trim(),
+        };
+      }
+
+      function resolveSheetBadge(isoDate) {
+        if (!isoDate || !isoDate.includes("-")) return "";
+        const parts = isoDate.split("-").map(Number);
+        let y = parts[0],
+          m = parts[1],
+          d = parts[2];
+        if (d >= 26) {
+          m += 1;
+          if (m > 12) {
+            m = 1;
+            y += 1;
+          }
+        }
+        const months = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
+        return `Tab: ${months[m - 1]} ${String(y).slice(-2)}`;
+      }
+
+      async function callBackend(payload) {
+        const cfg = getConfig();
+        if (!cfg.url || !cfg.pin) {
+          document.getElementById("settingsCard").classList.add("open");
+          throw new Error(
+            "Silakan isi Web App URL dan PIN di Pengaturan terlebih dahulu.",
+          );
+        }
+
+        const res = await fetch(cfg.url, {
+          method: "POST",
+          redirect: "follow",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            ...payload,
+            pin: cfg.pin,
+            actor: currentActor,
+          }),
+        });
+
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          throw new Error(
+            "Respons tidak valid dari Apps Script. Pastikan akses deployment diset ke 'Anyone'.",
+          );
+        }
+
+        if (data.status === "error") {
+          throw new Error(data.message || "Terjadi kesalahan di server.");
+        }
+        return data;
+      }
+
+      function renderPreview() {
+        const card = document.getElementById("previewCard");
+        const list = document.getElementById("previewList");
+        if (!previewItems.length) {
+          card.style.display = "none";
+          return;
+        }
+        card.style.display = "block";
+        list.innerHTML = previewItems
+          .map(
+            (it, idx) => `
+      <div class="preview-item">
+        <div class="preview-top">
+          <span class="badge">${resolveSheetBadge(it.date)}</span>
+          <button type="button" class="del-btn" data-del="${idx}">✕ Hapus</button>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label>Deskripsi</label>
+            <input type="text" data-field="item" data-idx="${idx}" value="${String(it.item || "").replace(/"/g, "&quot;")}" />
+          </div>
+          <div>
+            <label>Harga (Rp)</label>
+            <input type="number" data-field="amount" data-idx="${idx}" value="${Number(it.amount) || 0}" />
+          </div>
+        </div>
+        <div class="grid-2" style="margin-bottom:0;">
+          <div>
+            <label>Tanggal</label>
+            <input type="date" data-field="date" data-idx="${idx}" value="${it.date || ""}" />
+          </div>
+          <div>
+            <label>Tabel Kategori</label>
+            <select data-field="category" data-idx="${idx}">
+              <option value="BULANAN" ${it.category === "BULANAN" ? "selected" : ""}>Pengeluaran Bulanan</option>
+              <option value="FOYA_FOYA" ${it.category === "FOYA_FOYA" ? "selected" : ""}>Foya-foya Bulanan</option>
+              <option value="SAMPINGAN" ${it.category === "SAMPINGAN" ? "selected" : ""}>Sampingan Bulanan</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    `,
+          )
+          .join("");
+      }
+
+      function renderCommitSuccess(results, modelUsed) {
+        const lines = (results || [])
+          .map(
+            (r) =>
+              `• <b>${r.category}</b> (${r.sheet} | ${r.date}):<br>&nbsp;&nbsp;<code>${r.description}</code> → <b>Rp ${formatRupiah(r.total)}</b> (<code>${r.formula}</code>)`,
+          )
+          .join("<br>");
+        const modelTag = modelUsed
+          ? `<br><small style="opacity:0.8;">Model AI: ${modelUsed}</small>`
+          : "";
+        showStatus(
+          "ok",
+          `✅ <b>Berhasil dicatat ke Google Sheet!</b><br>${lines}${modelTag}`,
+        );
+        document.getElementById("expenseInput").value = "";
+        previewItems = [];
+        renderPreview();
+      }
+
+      // Event Listeners
+      document
+        .getElementById("toggleSettingsBtn")
+        .addEventListener("click", () => {
+          document.getElementById("settingsCard").classList.toggle("open");
+        });
+
+      document
+        .getElementById("saveSettingsBtn")
+        .addEventListener("click", () => {
+          const url = document.getElementById("webAppUrlInput").value.trim();
+          const pin = document.getElementById("pinInput").value.trim();
+          localStorage.setItem(STORAGE_URL, url);
+          localStorage.setItem(STORAGE_PIN, pin);
+          showStatus("ok", "Pengaturan tersimpan di browser perangkat ini.");
+          document.getElementById("settingsCard").classList.remove("open");
+        });
+
+      document.getElementById("pingBtn").addEventListener("click", async () => {
+        const url = document.getElementById("webAppUrlInput").value.trim();
+        const pin = document.getElementById("pinInput").value.trim();
+        localStorage.setItem(STORAGE_URL, url);
+        localStorage.setItem(STORAGE_PIN, pin);
+
+        try {
+          showStatus("info", "Menguji koneksi ke Google Apps Script...");
+          const res = await callBackend({ action: "ping" });
+          const keyStatus = res.hasGeminiKey
+            ? "GEMINI_API_KEY aktif ✅"
+            : "⚠️ GEMINI_API_KEY belum diisi!";
+          showStatus("ok", `${res.message} (${keyStatus})`);
+        } catch (err) {
+          showStatus("err", "Gagal terhubung: " + err.message);
+        }
+      });
+
+      document
+        .getElementById("btnActorS")
+        .addEventListener("click", () => setActor("s"));
+      document
+        .getElementById("btnActorI")
+        .addEventListener("click", () => setActor("i"));
+
+      document
+        .getElementById("previewBtn")
+        .addEventListener("click", async () => {
+          const text = document.getElementById("expenseInput").value.trim();
+          if (!text)
+            return showStatus("err", "Ketik atau ucapkan pengeluaran dulu.");
+          const btn = document.getElementById("previewBtn");
+          btn.disabled = true;
+          try {
+            showStatus("info", "AI sedang membaca catatan Anda...");
+            const res = await callBackend({ action: "preview", text });
+            previewItems = res.items || [];
+            renderPreview();
+            showStatus(
+              "ok",
+              `Ditemukan <b>${previewItems.length} item</b> (via ${res.modelUsed}). Silakan cek/edit lalu klik Simpan.`,
+            );
+          } catch (err) {
+            showStatus("err", err.message);
+          } finally {
+            btn.disabled = false;
+          }
+        });
+
+      document
+        .getElementById("commitDirectBtn")
+        .addEventListener("click", async () => {
+          const text = document.getElementById("expenseInput").value.trim();
+          if (!text)
+            return showStatus("err", "Ketik atau ucapkan pengeluaran dulu.");
+          const btn = document.getElementById("commitDirectBtn");
+          btn.disabled = true;
+          try {
+            showStatus(
+              "info",
+              "Memproses & menyimpan langsung ke Google Sheet...",
+            );
+            const res = await callBackend({ action: "commit", text });
+            renderCommitSuccess(res.results, res.modelUsed);
+          } catch (err) {
+            showStatus("err", err.message);
+          } finally {
+            btn.disabled = false;
+          }
+        });
+
+      document
+        .getElementById("confirmCommitBtn")
+        .addEventListener("click", async () => {
+          if (!previewItems.length) return;
+          const btn = document.getElementById("confirmCommitBtn");
+          btn.disabled = true;
+          try {
+            showStatus("info", "Menyimpan ke Google Sheet...");
+            const res = await callBackend({
+              action: "commit",
+              items: previewItems,
+            });
+            renderCommitSuccess(res.results, "preview-verified");
+          } catch (err) {
+            showStatus("err", err.message);
+          } finally {
+            btn.disabled = false;
+          }
+        });
+
+      document.getElementById("previewList").addEventListener("input", (e) => {
+        const idx = e.target.getAttribute("data-idx");
+        const field = e.target.getAttribute("data-field");
+        if (idx !== null && field) {
+          previewItems[idx][field] =
+            field === "amount" ? Number(e.target.value) : e.target.value;
+          if (field === "date") renderPreview();
+        }
+      });
+
+      document.getElementById("previewList").addEventListener("click", (e) => {
+        const delIdx = e.target.getAttribute("data-del");
+        if (delIdx !== null) {
+          previewItems.splice(Number(delIdx), 1);
+          renderPreview();
+        }
+      });
+
+      // Voice Input (Web Speech API)
+      const micBtn = document.getElementById("micBtn");
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.lang = "id-ID";
+        recognition.interimResults = false;
+
+        micBtn.addEventListener("click", () => {
+          try {
+            recognition.start();
+            micBtn.classList.add("recording");
+            micBtn.textContent = "🛑 Mendengarkan...";
+          } catch (e) {}
+        });
+
+        recognition.onresult = (event) => {
+          const rawTranscript = event.results[0][0].transcript;
+          // Gabungkan pecahan angka tanggal STT: "20-08" atau "2-08" -> "28", "3-01" -> "31"
+          const transcript = rawTranscript
+            .replace(/\b([1-3])0?[\s-]+0([1-9])\b(?![\s-]+\d{4})/g, "$1$2")
+            .replace(/\b(tanggal|tgl)\s+([1-3])0?[\s-]+([1-9])\b/gi, "$1 $2$3");
+
+          const box = document.getElementById("expenseInput");
+          box.value = box.value
+            ? box.value.trim() + ", " + transcript
+            : transcript;
+          showStatus("ok", `Suara ditangkap: "${transcript}"`);
+        };
+
+        recognition.onerror = (e) => {
+          showStatus("err", "Gagal merekam suara: " + e.error);
+        };
+
+        recognition.onend = () => {
+          micBtn.classList.remove("recording");
+          micBtn.textContent = "🎤 Suara";
+        };
+      } else {
+        micBtn.disabled = true;
+        micBtn.title = "Browser tidak mendukung input suara";
+      }
+
+      // Init
+      setActor(currentActor);
+      const initCfg = getConfig();
+      document.getElementById("webAppUrlInput").value = initCfg.url;
+      document.getElementById("pinInput").value = initCfg.pin;
+      if (!initCfg.url || !initCfg.pin) {
+        document.getElementById("settingsCard").classList.add("open");
+      }
+    </script>
+  </body>
+</html>
